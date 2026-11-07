@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "FrameCue",
+  "version": "0.6.2",
+  "identifier": "com.omnipulse.studio",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "FrameCue",
+        "decorations": false,
+        "shadow": true,
+        "width": 960,
+        "height": 700,
+        "minWidth": 700,
+        "minHeight": 540,
+        "center": true,
+        "additionalBrowserArgs": "--disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' data: blob: asset: http://asset.localhost; media-src 'self' data: blob: mediastream: asset: http://asset.localhost; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' data: blob: ipc: http://ipc.localhost; object-src 'none'; frame-src 'none'",
+      "devCsp": "default-src 'self'; img-src 'self' data: blob: asset: http://asset.localhost; media-src 'self' data: blob: mediastream: asset: http://asset.localhost; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' data: blob: ipc: http://ipc.localhost http://localhost:1420 ws://localhost:1420 http://127.0.0.1:1420 ws://127.0.0.1:1420; object-src 'none'; frame-src 'none'",
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$VIDEO/OmniPulse/**",
+          "$PICTURE/OmniPulse/**"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+# Cargo uses its normal online resolution and local cache.
+# For an explicitly offline build, pass --offline after fetching dependencies.
+[net]
+retry = 2

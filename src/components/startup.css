@@ -1,0 +1,11 @@
+.devtune-app{min-height:100dvh}
+body:has(.devtune-splash),body:has(.devtune-splash) .workspace{overflow:hidden}
+.devtune-entering{animation:devtune-app-enter 350ms 900ms both ease-out}
+.devtune-splash{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#080b09;animation:devtune-veil 1250ms both ease-in-out;pointer-events:all}
+.devtune-signature{display:flex;align-items:center;flex-direction:column;gap:23px;animation:devtune-signature 1080ms both ease-in-out}
+.devtune-signature img{display:block;object-fit:contain}
+.devtune-signature span{font-family:Inter,"Segoe UI",sans-serif;color:#a9b4ad;font-size:10px;font-weight:400;letter-spacing:.04em;line-height:1.5}
+@keyframes devtune-signature{0%{opacity:0;transform:translateY(5px)}20%,79%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-3px)}}
+@keyframes devtune-veil{0%,76%{opacity:1}100%{opacity:0}}
+@keyframes devtune-app-enter{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.devtune-entering,.devtune-splash,.devtune-signature{animation:none}}
