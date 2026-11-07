@@ -13,12 +13,7 @@ const targets=()=>fetch(endpoint+'/json/list').then(r=>r.json());
 const attachSurface=async name=>{for(let n=0;n<60;n++){const t=(await targets()).find(t=>t.url.includes('surface='+name));if(t)return browser.attach(t.id);await delay(150);}throw new Error('Missing surface '+name);};
 const appData=join(process.env.APPDATA,'com.omnipulse.studio');
 const snapshots=new Map(['hidden-captures.json','capture-folders.json','capture-kinds.json','widget-docks.json','clicker-binding.json'].map(name=>{const path=join(appData,name);return[path,existsSync(path)?readFileSync(path):null];}));
-let page,preferences,binding;const created=[];
-const input=async(keys=[],mouse=false)=>{
-const type='using System;using System.Runtime.InteropServices;public class VerifyInput{[DllImport("user32.dll")]public static extern void keybd_event(byte k,byte s,uint f,UIntPtr e);[DllImport("user32.dll")]public static extern void mouse_event(uint f,uint x,uint y,uint d,UIntPtr e);}';
-const calls=mouse?'[VerifyInput]::mouse_event(128,0,0,1,[UIntPtr]::Zero);Start-Sleep -Milliseconds 100;[VerifyInput]::mouse_event(256,0,0,1,[UIntPtr]::Zero)':keys.map(([key,up])=>'[VerifyInput]::keybd_event('+key+',0,'+(up?2:0)+',[UIntPtr]::Zero);Start-Sleep -Milliseconds 100').join(';');
-execFileSync('powershell.exe',['-NoProfile','-Command',"Add-Type -TypeDefinition '"+type+"';"+calls],{windowsHide:true});
-};
+let page,preferences;const created=[];
 try{
   const main=(await targets()).find(t=>!t.url.includes('surface='));assert(main);page=await browser.attach(main.id);
   await page.wait(()=>!!document.querySelector('.recorder-page'));

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { DotsSixVertical, EyeSlash, Pause, Play, Stop, ArrowSquareOut, Check, X, Record } from '@phosphor-icons/react';
@@ -16,7 +16,7 @@ export function DesktopSurface({ surface }: { surface: string }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const origin = useRef({ x: 0, y: 0 });
-  const confirm = async () => { if (!rect || busy) return; setBusy(true); try { await invoke('complete_selection', { region: rect }); } catch (e) { setError(errorMessage(e)); setBusy(false); } };
+  const confirm = useCallback(async () => { if (!rect || busy) return; setBusy(true); try { await invoke('complete_selection', { region: rect }); } catch (e) { setError(errorMessage(e)); setBusy(false); } }, [rect, busy]);
   useEffect(() => {
     document.documentElement.dataset.surface = surface;
     if (surface === 'controls') {
@@ -30,7 +30,7 @@ export function DesktopSurface({ surface }: { surface: string }) {
     if (surface !== 'selection') return;
     const keydown = (e: KeyboardEvent) => { if (e.key === 'Escape') void invoke('cancel_selection'); if (e.key === 'Enter') void confirm(); };
     window.addEventListener('keydown', keydown); return () => window.removeEventListener('keydown', keydown);
-  }, [surface, rect, busy]);
+  }, [surface, confirm]);
   if (surface === 'widget') { const kind = new URLSearchParams(location.search).get('kind'); return <WidgetSurface kind={kind === 'voice' || kind === 'screenshot' ? kind : 'recorder'} />; }
   if (surface === 'frame') return <div className="recording-halo" aria-hidden="true" />;
   const action = (value: string) => { void invoke('recording_action', { action: value }).catch(e => setError(errorMessage(e))); };

@@ -4,7 +4,9 @@
 
 ## Open
 
-Run **FrameCue.exe** from this folder. The portable release embeds the interface, works offline, and opens without a command window. Requires Windows 10/11 and Microsoft Edge WebView2 Runtime.
+Download the EXE or portable ZIP from [GitHub Releases](https://github.com/MiladClark/recorder-auto-clicker/releases/latest). Run the downloaded EXE, or extract the ZIP and open **FrameCue.exe**. The portable release embeds the interface, works offline, and opens without a command window. Requires Windows 10/11 x64 and Microsoft Edge WebView2 Runtime. SHA-256 checksums are included with every release.
+
+The title bar offers neutral dark, light and colorful themes. The selected theme is saved and shared with floating controls. Minimize sends the app to the system tray; left-click its tray icon to restore it, or right-click for capture and recording controls.
 
 ## Record
 
@@ -18,6 +20,12 @@ The settings button contains quality, audio levels, microphone selection, auto-m
 
 Recordings use the available WebM/MP4 MediaRecorder encoder. Desktop recordings stream to disk in one-second chunks. Pause excludes elapsed time; Stop finalizes the file. Default destination is Videos/OmniPulse, with custom folders supported. Changing tools preserves recording and editor state.
 
+## Voice recorder
+
+Choose a microphone, then Record, Pause/Resume or Stop. The wave and equalizer views react to the actual microphone signal. Recordings stream to disk, exclude paused time and appear in Library with audio playback. The default folder is Music/OmniPulse; a custom folder is supported.
+
+Video, voice and screenshot widgets snap to the top, left or right screen edge. Drag the grip to move along an edge or switch edges; side widgets use a vertical layout. Hide a widget and reopen it from the app or tray.
+
 ## Screenshot
 
 Choose a display explicitly. **Capture screen** captures only that monitor at its native resolution. **Capture area** opens a frozen, full-monitor selection overlay on that display: drag a rectangle, then Capture or Enter. Escape or right-click cancels. Physical coordinates support monitors on either side of the primary display and differing pixel densities.
@@ -28,7 +36,7 @@ The editor supports pen, arrow, rectangle, opaque redaction, crop and 20-step un
 
 Add independent items for mouse buttons or keyboard keys. Open an item, press its Button control and physically press the button to automate. Capture accepts standard mouse buttons, keyboard keys, standalone modifiers and key combinations.
 
-Each item has two actions: **Repeat** presses/releases continuously at the selected delay; **Hold** keeps its button down until stopped. Delay accepts fractional milliseconds (including 0.5 ms) or seconds. A live circle previews the rhythm and shows the configured click rate; very fast pulses merge into a continuous activity indicator. The preview sends no input and respects reduced motion. The first available default shortcut is F6; each item can have its own keyboard or mouse start/stop button. Clear removes that shortcut and disables it. Clearing the output disables the item until a button is selected again.
+Each item supports **Repeat clicks**, **Hold & repeat**, **Click in bursts**, or **Keep held**. Speed, hold duration, click duration and no-click pause duration are separate settings. Times accept fractional milliseconds (including 0.5 ms) or seconds. A live circle previews click speed; a timeline previews the active/pause cycle. Very fast pulses merge into a continuous activity indicator. Previews send no input and respect reduced motion. The first available default shortcut is F6; each item can have its own keyboard or mouse start/stop button. Clear removes that shortcut and disables it. Clearing the output disables the item until a button is selected again.
 
 Start/stop buttons and shortcuts operate independently; several items can run together. A mouse item started from its row gives two seconds to move the pointer. Shortcuts start immediately. **Stop all** and **Ctrl+Shift+F12** stop every item and release held inputs. An output cannot match any start/stop button, and conflicting Hold actions cannot run together. Items persist in the application's data directory.
 
@@ -36,7 +44,7 @@ Windows can block input into elevated applications. Timing depends on Windows sc
 
 ## Library
 
-Preview videos and images, search names, filter type and dates, and sort by newest, oldest, largest, smallest or name. The trash icon opens a choice:
+Preview videos, audio and images, search names, filter type and dates, and sort by newest, oldest, largest, smallest or name. The trash icon opens a choice:
 
 - **Hide from library** keeps the original file. Filters → Restore hidden brings hidden captures back.
 - **Delete from device** permanently deletes the named file after confirmation.
@@ -45,21 +53,25 @@ Deletion is limited to indexed captures. The library includes the default media 
 
 ## Development
 
-Install Node.js 22+, pnpm, Rust, and Visual Studio C++ Build Tools with the Windows SDK.
+Install Node.js 22.13+ (or 24+), pnpm, current stable Rust, and Visual Studio C++ Build Tools with the Windows SDK.
 
 - `pnpm install --frozen-lockfile`
 - `pnpm dev` — browser preview at http://localhost:1420
 - `pnpm dev:app` — native development; stop a separate Vite server first
 - `pnpm typecheck`
+- `pnpm lint` — ESLint across TypeScript, React hooks, JavaScript, scripts and tests; no warnings allowed
+- `pnpm lint:native` — Rust formatting and Clippy on all targets; no warnings allowed
+- `pnpm check` — all static checks and Rust tests
 - `pnpm test:native` — Rust tests
 - `pnpm test:ui` — browser integration; run Vite first
 - `pnpm test:desktop` — native integration with an explicitly enabled WebView2 debugging endpoint
 - `pnpm build` — production frontend
 - `pnpm build:app` — builds the portable app, checks the Windows GUI subsystem, updates root FrameCue.exe, and writes a versioned release plus SHA256SUMS.txt
+- `pnpm package:release` — after building, packages the Windows x64 EXE, portable ZIP, documentation, third-party notices and SHA-256 checksums under release/
 
 The native integration test checks both connected displays, real Windows mouse selection, floating recording controls, actual video output, library hide/delete, and native keyboard/mouse bindings. It creates and removes its own media, restores preferences, and avoids retaining desktop screenshots.
 
-The prior executable is backed up under release/previous. Inter is bundled locally under public/fonts/OFL.txt.
+The prior executable is backed up under release/previous. Build output, executables, generated schemas, local QA reports and secrets are excluded from Git. Inter is bundled locally under public/fonts/OFL.txt. The audio visualizer is adapted from Sina UI under licenses/sinaui-MIT.txt.
 
 ## Identity
 The open frame and outlined playhead are original vector geometry. White and dark marks are in public/brand. Native Windows, macOS and store icons are generated from the same master. Existing preferences and the OmniPulse capture folders remain compatible after the rename.

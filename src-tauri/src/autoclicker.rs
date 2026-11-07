@@ -497,10 +497,10 @@ fn start(app: AppHandle, id: &str) -> Result<(), String> {
     }) {
         return Err("A running item already holds one of these buttons.".into());
     }
-    if let Some(previous) = workers.remove(id) {
-        if let Some(handle) = previous.handle {
-            let _ = handle.join();
-        }
+    if let Some(previous) = workers.remove(id)
+        && let Some(handle) = previous.handle
+    {
+        let _ = handle.join();
     }
     let running = Arc::new(AtomicBool::new(true));
     let count = Arc::new(AtomicU64::new(0));
@@ -609,10 +609,8 @@ fn start(app: AppHandle, id: &str) -> Result<(), String> {
             }
             wait(delay);
         }
-        if held {
-            if let Err(reason) = send_action(&action, false, true) {
-                error = Some(reason);
-            }
+        if held && let Err(reason) = send_action(&action, false, true) {
+            error = Some(reason);
         }
         worker_running.store(false, Ordering::SeqCst);
         worker_phase.store(Phase::Stopped as u8, Ordering::SeqCst);

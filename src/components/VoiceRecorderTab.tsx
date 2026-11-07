@@ -17,6 +17,7 @@ export function VoiceRecorderTab({ onRecordingChange }: { onRecordingChange: (ac
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [folder, setFolder] = useState('Music / OmniPulse');
   const [seconds, setSeconds] = useState(0), [size, setSize] = useState(0), [level, setLevel] = useState(0);
+  const wholeSeconds = Math.floor(seconds);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [error, setError] = useState(''), [saved, setSaved] = useState(''), [preview, setPreview] = useState('');
   const recorder = useRef<MediaRecorder | null>(null), stream = useRef<MediaStream | null>(null), context = useRef<AudioContext | null>(null);
@@ -54,7 +55,7 @@ export function VoiceRecorderTab({ onRecordingChange }: { onRecordingChange: (ac
     const timer = setInterval(() => { analyser.getByteTimeDomainData(samples); let sum = 0; for (const sample of samples) sum += ((sample - 128) / 128) ** 2; setLevel(Math.min(1, Math.sqrt(sum / samples.length) * 3)); }, 100);
     return () => clearInterval(timer);
   }, [analyser, phase]);
-  useEffect(() => { if (desktop) void invoke('sync_widget_status', { kind: 'voice', status: { phase, seconds: Math.floor(seconds), level } }).catch(console.error); }, [phase, Math.floor(seconds), level]);
+  useEffect(() => { if (desktop) void invoke('sync_widget_status', { kind: 'voice', status: { phase, seconds: wholeSeconds, level } }).catch(console.error); }, [phase, wholeSeconds, level]);
 
   const stop = () => {
     const value = recorder.current;

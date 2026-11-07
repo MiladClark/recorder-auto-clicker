@@ -312,11 +312,10 @@ pub async fn show_recording_overlay(
                 .map_err(|e| e.to_string())?;
             border.show().map_err(|e| e.to_string())?;
         }
-        if minimize {
-            if let Some(main) = app.get_webview_window("main") {
+        if minimize
+            && let Some(main) = app.get_webview_window("main") {
                 main.hide().map_err(|e| e.to_string())?;
             }
-        }
         Ok(())
     }.await;
     if result.is_err() {

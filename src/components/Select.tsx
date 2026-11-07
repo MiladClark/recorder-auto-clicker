@@ -24,6 +24,7 @@ export function Select({ value, options, onValueChange, disabled, onOpen, 'aria-
   const [position, setPosition] = useState({ top: 0, left: 0, minWidth: 0, maxHeight: 280 });
   const selected = options.findIndex(option => String(option.value) === String(value));
   const optionId = (index: number) => `${id}-option-${index}`;
+  const activeOptionId = optionId(active);
 
   const show = (last = false) => {
     if (disabled || !options.some(option => !option.disabled)) return;
@@ -96,8 +97,8 @@ export function Select({ value, options, onValueChange, disabled, onOpen, 'aria-
     };
   }, [open]);
   useEffect(() => {
-    if (open) document.getElementById(optionId(active))?.scrollIntoView({ block: 'nearest' });
-  }, [open, active, id]);
+    if (open) document.getElementById(activeOptionId)?.scrollIntoView({ block: 'nearest' });
+  }, [open, activeOptionId]);
 
   const keyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     const key = event.key;

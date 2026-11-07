@@ -423,16 +423,16 @@ unsafe extern "system" fn mouse(code: i32, wparam: usize, lparam: isize) -> isiz
                 }
                 _ => None,
             };
-            if let Some(vk) = key {
-                if queue_input(
+            if let Some(vk) = key
+                && queue_input(
                     vk,
                     matches!(
                         wparam as u32,
                         WM_LBUTTONDOWN | WM_RBUTTONDOWN | WM_MBUTTONDOWN | WM_XBUTTONDOWN
                     ),
-                ) {
-                    return 1;
-                }
+                )
+            {
+                return 1;
             }
         }
     }

@@ -8,7 +8,7 @@ const executable=resolve('FrameCue.exe'),release=resolve('release/FrameCue-0.5.0
 const dataPath=join(process.env.APPDATA,'com.omnipulse.studio/clicker-items.json');
 const snapshot=existsSync(dataPath)?readFileSync(dataPath):null;
 let browser,page,original=[];
-const connect=async()=>{for(let i=0;i<40;i++){try{const v=await(await fetch(endpoint+'/json/version')).json();browser=await Browser.connect(v.webSocketDebuggerUrl);const targets=await(await fetch(endpoint+'/json/list')).json();const target=targets.find(t=>!t.url.includes('surface='));if(target){page=await browser.attach(target.id);await page.wait(()=>!!document.querySelector('.recorder-page'));return;}}catch{}await delay(250);}throw new Error('App did not restart.');};
+const connect=async()=>{for(let i=0;i<40;i++){try{const v=await(await fetch(endpoint+'/json/version')).json();browser=await Browser.connect(v.webSocketDebuggerUrl);const targets=await(await fetch(endpoint+'/json/list')).json();const target=targets.find(t=>!t.url.includes('surface='));if(target){page=await browser.attach(target.id);await page.wait(()=>!!document.querySelector('.recorder-page'));return;}}catch{ /* Retry while WebView2 starts. */ }await delay(250);}throw new Error('App did not restart.');};
 const invoke=(name,args={})=>page.eval(({name,args})=>window.__TAURI_INTERNALS__.invoke(name,args),{name,args});
 const binding=vk=>({vk,ctrl:false,shift:false,alt:false,win:false,label:'F'+(vk-111)});
 try{

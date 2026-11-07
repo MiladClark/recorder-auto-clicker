@@ -204,10 +204,10 @@ pub fn refresh(app: &tauri::AppHandle) {
             ("clicker-stop", clicking),
             ("widgets", widgets),
         ] {
-            if let Some(item) = menu.get(id) {
-                if let Some(item) = item.as_menuitem() {
-                    let _ = item.set_enabled(enabled);
-                }
+            if let Some(item) = menu.get(id)
+                && let Some(item) = item.as_menuitem()
+            {
+                let _ = item.set_enabled(enabled);
             }
         }
     }

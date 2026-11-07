@@ -61,24 +61,21 @@ fn cursor() -> Result<(i32, i32), String> {
     Err("Could not read pointer position".into())
 }
 pub fn load(app: &tauri::AppHandle) {
-    if let Ok(root) = app.path().app_data_dir() {
-        if let Ok(bytes) = std::fs::read(root.join("widget-docks.json")) {
-            if let Ok(value) = serde_json::from_slice::<HashMap<String, Dock>>(&bytes) {
-                if let Ok(mut docks) = app.state::<WidgetState>().docks.lock() {
-                    *docks = value;
-                }
-            }
-        }
+    if let Ok(root) = app.path().app_data_dir()
+        && let Ok(bytes) = std::fs::read(root.join("widget-docks.json"))
+        && let Ok(value) = serde_json::from_slice::<HashMap<String, Dock>>(&bytes)
+        && let Ok(mut docks) = app.state::<WidgetState>().docks.lock()
+    {
+        *docks = value;
     }
 }
 fn save(app: &tauri::AppHandle) {
-    if let Ok(root) = app.path().app_data_dir() {
-        if let Ok(docks) = app.state::<WidgetState>().docks.lock() {
-            if let Ok(bytes) = serde_json::to_vec(&*docks) {
-                let _ = std::fs::create_dir_all(&root);
-                let _ = std::fs::write(root.join("widget-docks.json"), bytes);
-            }
-        }
+    if let Ok(root) = app.path().app_data_dir()
+        && let Ok(docks) = app.state::<WidgetState>().docks.lock()
+        && let Ok(bytes) = serde_json::to_vec(&*docks)
+    {
+        let _ = std::fs::create_dir_all(&root);
+        let _ = std::fs::write(root.join("widget-docks.json"), bytes);
     }
 }
 

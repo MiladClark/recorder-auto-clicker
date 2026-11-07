@@ -30,6 +30,7 @@ export function RecorderTab({ onRecordingChange }: { onRecordingChange: (active:
   const [systemGain, setSystemGain] = useState(100);
   const [micLevel, setMicLevel] = useState(0);
   const [seconds, setSeconds] = useState(0);
+  const wholeSeconds = Math.floor(seconds);
   const [size, setSize] = useState(0);
   const [screenInfo, setScreenInfo] = useState('');
   const [error, setError] = useState('');
@@ -69,17 +70,21 @@ export function RecorderTab({ onRecordingChange }: { onRecordingChange: (active:
     const enumerate = () => navigator.mediaDevices?.enumerateDevices().then(list => setDevices(list.filter(d => d.kind === 'audioinput'))).catch(() => {});
     void enumerate();
     navigator.mediaDevices?.addEventListener('devicechange', enumerate);
-    if (desktop) void invoke<{ videos: string }>('get_output_dirs').then(dirs => setFolderLabel(destination || dirs.videos)).catch(() => {});
     if (desktop) void invoke<Display[]>('get_displays').then(setDisplays).catch(err => setError(errorMessage(err)));
     return () => navigator.mediaDevices?.removeEventListener('devicechange', enumerate);
   }, []);
+  useEffect(() => {
+    let disposed = false;
+    if (desktop) void invoke<{ videos: string }>('get_output_dirs').then(dirs => { if (!disposed) setFolderLabel(destination || dirs.videos); }).catch(() => {});
+    return () => { disposed = true; };
+  }, [destination]);
   useEffect(() => {
     if (!desktop) return;
     const action = listen<'start' | 'pause' | 'stop'>('recorder:action', e => actions.current[e.payload]?.());
     const region = listen<Rect>('capture:region', e => { setCrop(e.payload); setCropping(false); if (overlayOptions.current.autoMinimize) void invoke('sync_recording_overlay',{status:{phase:'ready',seconds:0}}).then(()=>invoke('show_recording_overlay',{displayId:overlayOptions.current.displayId,frame:false,minimize:true})).catch(err=>setWarning(errorMessage(err))); });
     return () => { void action.then(unlisten => unlisten()); void region.then(unlisten => unlisten()); };
   }, []);
-  useEffect(() => { if (desktop) void invoke('sync_recording_overlay', { status: { phase, seconds: Math.floor(seconds) } }).catch(() => {}); }, [phase, Math.floor(seconds)]);
+  useEffect(() => { if (desktop) void invoke('sync_recording_overlay', { status: { phase, seconds: wholeSeconds } }).catch(() => {}); }, [phase, wholeSeconds]);
   useEffect(() => {
     if (phase !== 'recording') return;
     const interval = window.setInterval(() => setSeconds((elapsedRef.current + performance.now() - activeSince.current) / 1000), 250);
@@ -100,7 +105,7 @@ export function RecorderTab({ onRecordingChange }: { onRecordingChange: (active:
     setScreenInfo(''); setCrop(null); setCropping(false);
   }, []);
   useEffect(() => () => {
-    recorderRef.current?.state !== 'inactive' && recorderRef.current?.stop();
+    if (recorderRef.current?.state !== 'inactive') recorderRef.current?.stop();
     releaseAudio(); releaseScreen();
   }, [releaseAudio, releaseScreen]);
 

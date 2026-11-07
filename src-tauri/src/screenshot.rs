@@ -135,7 +135,7 @@ unsafe fn capture_gdi_rect(x: i32, y: i32, width: i32, height: i32) -> Result<Ve
     }
 
     // Convert BGRA to RGBA
-    for chunk in raw_pixels.chunks_exact_mut(4) {
+    for chunk in raw_pixels.as_chunks_mut::<4>().0 {
         let b = chunk[0];
         let r = chunk[2];
         chunk[0] = r;

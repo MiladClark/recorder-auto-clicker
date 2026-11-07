@@ -199,12 +199,11 @@ pub fn list_recordings(app: tauri::AppHandle) -> Result<Vec<RecordingMeta>, Stri
         .and_then(|root| std::fs::read(root.join("capture-kinds.json")).ok())
         .and_then(|bytes| serde_json::from_slice(&bytes).ok())
         .unwrap_or_default();
-    if let Ok(root) = app.path().app_data_dir() {
-        if let Ok(data) = std::fs::read(root.join("capture-folders.json")) {
-            if let Ok(extra) = serde_json::from_slice::<Vec<PathBuf>>(&data) {
-                folders.extend(extra);
-            }
-        }
+    if let Ok(root) = app.path().app_data_dir()
+        && let Ok(data) = std::fs::read(root.join("capture-folders.json"))
+        && let Ok(extra) = serde_json::from_slice::<Vec<PathBuf>>(&data)
+    {
+        folders.extend(extra);
     }
     let mut seen = std::collections::HashSet::new();
     let mut list = Vec::new();
